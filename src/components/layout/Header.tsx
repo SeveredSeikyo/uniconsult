@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard, Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from '@/components/ui/sheet'; 
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from '@/components/ui/sheet'; 
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -168,19 +168,22 @@ export default function Header() {
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="hover:bg-primary/80">
-                <Menu className="h-7 w-7"/> {/* Increased size from h-6 w-6 */}
+                <Menu className="h-8 w-8"/> {/* Increased size from h-7 w-7 to h-8 w-8 */}
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[350px] bg-primary text-primary-foreground p-6">
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle> 
               
               <div className="flex justify-between items-center mb-8">
                  <Link href="/" className="text-xl font-bold flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
                     <BookOpenCheck className="mr-2 h-7 w-7" />
                     UniConsult
                  </Link>
-                {/* SheetClose is part of SheetContent, its styling is in ui/sheet.tsx */}
+                <SheetClose className="ring-offset-transparent focus:ring-transparent focus:outline-none">
+                  <X className="h-7 w-7" />
+                  <span className="sr-only">Close menu</span>
+                </SheetClose>
               </div>
               <nav className="flex flex-col space-y-1">
                 {currentUser ? (
