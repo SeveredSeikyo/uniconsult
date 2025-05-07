@@ -4,7 +4,7 @@
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard, Menu, X } from 'lucide-react';
+import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard, Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
@@ -17,16 +17,19 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAccountDetailsOpenMobile, setIsAccountDetailsOpenMobile] = useState(false);
 
   const handleLogout = () => {
     logout();
     setIsMobileMenuOpen(false);
+    setIsAccountDetailsOpenMobile(false);
     router.push('/login');
   };
 
   useEffect(() => {
     // Close mobile menu on route change
     setIsMobileMenuOpen(false);
+    setIsAccountDetailsOpenMobile(false);
   }, [pathname]);
 
   if (isLoading) {
@@ -72,21 +75,21 @@ export default function Header() {
   };
 
 
-  const navLinks = (
+  const navLinks = (isMobile: boolean) => (
     <>
-      <Link href="/dashboard" className={navLinkClasses('/dashboard', isMobileMenuOpen)}>
+      <Link href="/dashboard" className={navLinkClasses('/dashboard', isMobile)}>
         <span className="flex items-center">
           <LayoutDashboard className="mr-2 h-5 w-5" />Dashboard
         </span>
       </Link>
       {role === 'student' && (
         <>
-          <Link href="/student/book-consultation" className={navLinkClasses('/student/book-consultation', isMobileMenuOpen)}>
+          <Link href="/student/book-consultation" className={navLinkClasses('/student/book-consultation', isMobile)}>
              <span className="flex items-center">
                 <BookOpenCheck className="mr-2 h-5 w-5" />Book
              </span>
           </Link>
-          <Link href="/student/my-consultations" className={navLinkClasses('/student/my-consultations', isMobileMenuOpen)}>
+          <Link href="/student/my-consultations" className={navLinkClasses('/student/my-consultations', isMobile)}>
             <span className="flex items-center">
                 <Users className="mr-2 h-5 w-5" />My Bookings
             </span>
@@ -95,12 +98,12 @@ export default function Header() {
       )}
       {role === 'faculty' && (
         <>
-          <Link href="/faculty/manage-status" className={navLinkClasses('/faculty/manage-status', isMobileMenuOpen)}>
+          <Link href="/faculty/manage-status" className={navLinkClasses('/faculty/manage-status', isMobile)}>
              <span className="flex items-center">
                 <UserCircle className="mr-2 h-5 w-5" />My Status
             </span>
           </Link>
-          <Link href="/faculty/my-consultations" className={navLinkClasses('/faculty/my-consultations', isMobileMenuOpen)}>
+          <Link href="/faculty/my-consultations" className={navLinkClasses('/faculty/my-consultations', isMobile)}>
              <span className="flex items-center">
                 <LayoutDashboard className="mr-2 h-5 w-5" />My Schedule
             </span>
@@ -109,12 +112,12 @@ export default function Header() {
       )}
       {role === 'admin' && (
         <>
-          <Link href="/admin/manage-faculty" className={navLinkClasses('/admin/manage-faculty', isMobileMenuOpen)}>
+          <Link href="/admin/manage-faculty" className={navLinkClasses('/admin/manage-faculty', isMobile)}>
             <span className="flex items-center">
               <Users className="mr-2 h-5 w-5" />Faculty
             </span>
           </Link>
-          <Link href="/admin/reports" className={navLinkClasses('/admin/reports', isMobileMenuOpen)}>
+          <Link href="/admin/reports" className={navLinkClasses('/admin/reports', isMobile)}>
             <span className="flex items-center">
               <ShieldCheck className="mr-2 h-5 w-5" />Reports
             </span>
@@ -136,7 +139,7 @@ export default function Header() {
         <nav className="hidden lg:flex items-center space-x-4 md:space-x-6">
           {currentUser ? (
             <>
-              {navLinks}
+              {navLinks(false)}
               <span className="hidden md:inline text-sm opacity-80">|</span>
               <Popover>
                 <PopoverTrigger asChild>
@@ -182,22 +185,33 @@ export default function Header() {
                     </Button>
                 </SheetClose>
               </div>
-              <nav className="flex flex-col space-y-3">
+              <nav className="flex flex-col space-y-1">
                 {currentUser ? (
                   <>
-                    {navLinks}
-                    <div className="border-t border-primary-foreground/20 my-4"></div>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button variant="ghost" className="flex items-center text-lg mb-3 px-4 py-3 hover:bg-primary/90 w-full justify-start">
-                          <UserCircle className="mr-2 h-5 w-5" /> {currentUser.name} ({currentUser.role})
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="p-0 border-0 shadow-none bg-transparent" sideOffset={10} side="bottom" align="start">
-                        <AccountInfoPopoverContent />
-                      </PopoverContent>
-                    </Popover>
-                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-lg py-3 hover:bg-primary/90">
+                    {navLinks(true)}
+                    <div className="border-t border-primary-foreground/20 my-3"></div>
+                    
+                    <Button 
+                      variant="ghost" 
+                      className="flex items-center text-lg mb-1 px-4 py-3 hover:bg-primary/90 w-full justify-between"
+                      onClick={() => setIsAccountDetailsOpenMobile(!isAccountDetailsOpenMobile)}
+                    >
+                      <span className="flex items-center">
+                        <UserCircle className="mr-2 h-5 w-5" /> {currentUser.name} ({currentUser.role})
+                      </span>
+                      {isAccountDetailsOpenMobile ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                    </Button>
+
+                    {isAccountDetailsOpenMobile && (
+                      <div className="pl-8 pr-4 pb-3 text-sm space-y-1 bg-primary/30 rounded-md">
+                        <p className="pt-2"><strong>Email:</strong> {currentUser.email}</p>
+                        {currentUser.student_id && <p><strong>Student ID:</strong> {currentUser.student_id}</p>}
+                        {currentUser.faculty_id && <p><strong>Faculty ID:</strong> {currentUser.faculty_id}</p>}
+                        {currentUser.department && <p><strong>Department:</strong> {currentUser.department}</p>}
+                      </div>
+                    )}
+                    
+                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-lg py-3 hover:bg-primary/90 mt-1">
                       <LogOut className="mr-2 h-5 w-5" /> Logout
                     </Button>
                   </>
@@ -215,3 +229,4 @@ export default function Header() {
     </header>
   );
 }
+
