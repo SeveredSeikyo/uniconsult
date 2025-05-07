@@ -1,20 +1,31 @@
+
 "use client";
 
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard } from 'lucide-react';
+import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard, Menu, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 
 export default function Header() {
   const { currentUser, role, logout, isLoading } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
+    setIsMobileMenuOpen(false);
     router.push('/login');
   };
+
+  useEffect(() => {
+    // Close mobile menu on route change
+    setIsMobileMenuOpen(false);
+  }, [pathname]);
 
   if (isLoading) {
     return (
@@ -30,8 +41,65 @@ export default function Header() {
     );
   }
 
-  const navLinkClasses = (path: string) => 
-    `hover:text-accent-foreground/80 transition-colors ${pathname === path ? 'font-semibold text-accent-foreground underline' : ''}`;
+  const navLinkClasses = (path: string, isMobile: boolean = false) => 
+    cn(
+      "transition-colors",
+      isMobile 
+        ? `block py-3 px-4 text-lg hover:bg-primary/90 rounded-md ${pathname === path ? 'bg-primary/80 font-semibold' : ''}`
+        : `hover:text-accent-foreground/80 ${pathname === path ? 'font-semibold text-accent-foreground underline' : ''}`
+    );
+
+  const navLinks = (
+    <>
+      <Link href="/dashboard" className={navLinkClasses('/dashboard', isMobileMenuOpen)}>
+        <span className="flex items-center">
+          <LayoutDashboard className="mr-2 h-5 w-5" />Dashboard
+        </span>
+      </Link>
+      {role === 'student' && (
+        <>
+          <Link href="/student/book-consultation" className={navLinkClasses('/student/book-consultation', isMobileMenuOpen)}>
+             <span className="flex items-center">
+                <BookOpenCheck className="mr-2 h-5 w-5" />Book
+             </span>
+          </Link>
+          <Link href="/student/my-consultations" className={navLinkClasses('/student/my-consultations', isMobileMenuOpen)}>
+            <span className="flex items-center">
+                <Users className="mr-2 h-5 w-5" />My Bookings
+            </span>
+          </Link>
+        </>
+      )}
+      {role === 'faculty' && (
+        <>
+          <Link href="/faculty/manage-status" className={navLinkClasses('/faculty/manage-status', isMobileMenuOpen)}>
+             <span className="flex items-center">
+                <UserCircle className="mr-2 h-5 w-5" />My Status
+            </span>
+          </Link>
+          <Link href="/faculty/my-consultations" className={navLinkClasses('/faculty/my-consultations', isMobileMenuOpen)}>
+             <span className="flex items-center">
+                <LayoutDashboard className="mr-2 h-5 w-5" />My Schedule
+            </span>
+          </Link>
+        </>
+      )}
+      {role === 'admin' && (
+        <>
+          <Link href="/admin/manage-faculty" className={navLinkClasses('/admin/manage-faculty', isMobileMenuOpen)}>
+            <span className="flex items-center">
+              <Users className="mr-2 h-5 w-5" />Faculty
+            </span>
+          </Link>
+          <Link href="/admin/reports" className={navLinkClasses('/admin/reports', isMobileMenuOpen)}>
+            <span className="flex items-center">
+              <ShieldCheck className="mr-2 h-5 w-5" />Reports
+            </span>
+          </Link>
+        </>
+      )}
+    </>
+  );
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-primary text-primary-foreground shadow-md">
@@ -40,36 +108,14 @@ export default function Header() {
           <BookOpenCheck className="mr-2 h-8 w-8" />
           UniConsult
         </Link>
-        <nav className="flex items-center space-x-4 md:space-x-6">
+
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center space-x-4 md:space-x-6">
           {currentUser ? (
             <>
-              <Link href="/dashboard" className={navLinkClasses('/dashboard')}>
-                <LayoutDashboard className="mr-1 inline-block h-4 w-4" />Dashboard
-              </Link>
-              {role === 'student' && (
-                <>
-                  <Link href="/student/book-consultation" className={navLinkClasses('/student/book-consultation')}>Book</Link>
-                  <Link href="/student/my-consultations" className={navLinkClasses('/student/my-consultations')}>My Bookings</Link>
-                </>
-              )}
-              {role === 'faculty' && (
-                <>
-                  <Link href="/faculty/manage-status" className={navLinkClasses('/faculty/manage-status')}>My Status</Link>
-                  <Link href="/faculty/my-consultations" className={navLinkClasses('/faculty/my-consultations')}>My Schedule</Link>
-                </>
-              )}
-              {role === 'admin' && (
-                <>
-                  <Link href="/admin/manage-faculty" className={navLinkClasses('/admin/manage-faculty')}>
-                    <Users className="mr-1 inline-block h-4 w-4" />Faculty
-                  </Link>
-                  <Link href="/admin/reports" className={navLinkClasses('/admin/reports')}>
-                    <ShieldCheck className="mr-1 inline-block h-4 w-4" />Reports
-                  </Link>
-                </>
-              )}
+              {navLinks}
               <span className="hidden md:inline text-sm opacity-80">|</span>
-              <span className="hidden md:inline items-center text-sm">
+              <span className="hidden md:flex items-center text-sm">
                 <UserCircle className="mr-1 inline-block h-4 w-4" /> {currentUser.name} ({currentUser.role})
               </span>
               <Button variant="ghost" size="sm" onClick={handleLogout} className="hover:bg-primary/80">
@@ -83,6 +129,51 @@ export default function Header() {
             </>
           )}
         </nav>
+
+        {/* Mobile Navigation Trigger */}
+        <div className="lg:hidden">
+          <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="hover:bg-primary/80">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Open menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[350px] bg-primary text-primary-foreground p-6">
+              <div className="flex justify-between items-center mb-8">
+                 <Link href="/" className="text-xl font-bold flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
+                    <BookOpenCheck className="mr-2 h-7 w-7" />
+                    UniConsult
+                 </Link>
+                <SheetClose asChild>
+                    <Button variant="ghost" size="icon" className="hover:bg-primary/80">
+                        <X className="h-6 w-6" />
+                        <span className="sr-only">Close menu</span>
+                    </Button>
+                </SheetClose>
+              </div>
+              <nav className="flex flex-col space-y-3">
+                {currentUser ? (
+                  <>
+                    {navLinks}
+                    <div className="border-t border-primary-foreground/20 my-4"></div>
+                    <div className="flex items-center text-sm mb-3 px-4">
+                      <UserCircle className="mr-2 h-5 w-5" /> {currentUser.name} ({currentUser.role})
+                    </div>
+                    <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-lg py-3 hover:bg-primary/90">
+                      <LogOut className="mr-2 h-5 w-5" /> Logout
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/login" className={navLinkClasses('/login', true)}>Login</Link>
+                    <Link href="/register" className={navLinkClasses('/register', true)}>Register</Link>
+                  </>
+                )}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
