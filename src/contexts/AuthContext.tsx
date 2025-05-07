@@ -2,6 +2,7 @@
 
 import type { User, UserRole } from '@/lib/definitions';
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 interface AuthContextType {
   currentUser: User | null;
@@ -9,10 +10,12 @@ interface AuthContextType {
   isLoading: boolean;
   login: (user: User) => void;
   logout: () => void;
-  setRole: (role: UserRole) => void; // For initial role simulation without full login
+  setRole: (role: UserRole) => void; 
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const COOKIE_OPTIONS = { expires: 7, path: '/' }; // Store cookies for 7 days
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -20,12 +23,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Simulate checking for an existing session
-    const storedUser = sessionStorage.getItem('currentUser');
-    if (storedUser) {
-      const parsedUser = JSON.parse(storedUser) as User;
-      setCurrentUser(parsedUser);
-      setLocalRole(parsedUser.role);
+    // Load user from cookies
+    const storedUserCookie = Cookies.get('currentUser');
+    if (storedUserCookie) {
+      try {
+        const parsedUser = JSON.parse(storedUserCookie) as User;
+        setCurrentUser(parsedUser);
+        setLocalRole(parsedUser.role);
+      } catch (error) {
+        console.error("Failed to parse user from cookie:", error);
+        Cookies.remove('currentUser'); // Clear corrupted cookie
+        Cookies.remove('userRole');
+      }
     }
     setIsLoading(false);
   }, []);
@@ -33,29 +42,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (user: User) => {
     setCurrentUser(user);
     setLocalRole(user.role);
-    sessionStorage.setItem('currentUser', JSON.stringify(user));
+    Cookies.set('currentUser', JSON.stringify(user), COOKIE_OPTIONS);
+    Cookies.set('userRole', user.role, COOKIE_OPTIONS);
   };
 
   const logout = () => {
     setCurrentUser(null);
     setLocalRole(null);
-    sessionStorage.removeItem('currentUser');
+    Cookies.remove('currentUser');
+    Cookies.remove('userRole');
+    // Also clear session storage if it was used as a fallback or by older versions
+    sessionStorage.removeItem('currentUser'); 
   };
   
-  // Used for quick role switching in demo if full login isn't implemented for all paths yet
   const setRole = (newRole: UserRole) => {
     setLocalRole(newRole);
+    let userToStore: User | null = null;
+
     if (currentUser) {
         const updatedUser = {...currentUser, role: newRole };
         setCurrentUser(updatedUser);
-        sessionStorage.setItem('currentUser', JSON.stringify(updatedUser));
+        userToStore = updatedUser;
     } else {
         // If no current user, create a mock one for role simulation
+        // This case might be less relevant if middleware always ensures a user for protected contexts
         const mockUser: User = {id: 0, name: `${newRole} User`, email: `${newRole}@example.com`, role: newRole};
         setCurrentUser(mockUser);
-        sessionStorage.setItem('currentUser', JSON.stringify(mockUser));
+        userToStore = mockUser;
     }
 
+    if (userToStore) {
+        Cookies.set('currentUser', JSON.stringify(userToStore), COOKIE_OPTIONS);
+        Cookies.set('userRole', newRole, COOKIE_OPTIONS);
+    } else {
+        // This case should ideally not be hit if a user is being assigned a role
+        Cookies.remove('currentUser');
+        Cookies.remove('userRole');
+    }
   }
 
   return (
