@@ -53,50 +53,89 @@ export async function getDb(): Promise<Database> {
     );
   `);
   
-  // Seed initial admin user if no users exist
+  // Seed initial data if no users exist
   const userCount = await db.get('SELECT COUNT(*) as count FROM users');
   if (userCount && userCount.count === 0) {
+    // Seed Admin
     await db.run(
       "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
       "Admin User", "admin@uniconsult.com", "adminpassword", "admin" // In a real app, hash the password
     );
     console.log("Seeded admin user: admin@uniconsult.com / adminpassword");
+
+    // Seed Faculty
+    const faculty1Result = await db.run(
+      "INSERT INTO users (name, email, password, role, faculty_id, department) VALUES (?, ?, ?, ?, ?, ?)",
+      "Dr. Ada Lovelace", "faculty@example.com", "password", "faculty", "F001", "Computer Science"
+    );
+    if (faculty1Result.lastID) {
+      await db.run(
+        "INSERT INTO faculty_status (faculty_id, status, last_updated) VALUES (?, ?, ?)",
+        faculty1Result.lastID, "Available", new Date().toISOString()
+      );
+    }
+    console.log("Seeded faculty: Dr. Ada Lovelace (faculty@example.com / password)");
+
+    const faculty2Result = await db.run(
+      "INSERT INTO users (name, email, password, role, faculty_id, department) VALUES (?, ?, ?, ?, ?, ?)",
+      "Prof. Charles Babbage", "faculty2@example.com", "password", "faculty", "F002", "Mathematics"
+    );
+    if (faculty2Result.lastID) {
+      await db.run(
+        "INSERT INTO faculty_status (faculty_id, status, last_updated) VALUES (?, ?, ?)",
+        faculty2Result.lastID, "In Class", new Date().toISOString()
+      );
+    }
+    console.log("Seeded faculty: Prof. Charles Babbage (faculty2@example.com / password)");
+
+    // Seed Students
+    const student1Result = await db.run(
+      "INSERT INTO users (name, email, password, role, student_id) VALUES (?, ?, ?, ?, ?)",
+      "Alice Wonderland", "student@example.com", "password", "student", "S001"
+    );
+    console.log("Seeded student: Alice Wonderland (student@example.com / password)");
+
+    const student2Result = await db.run(
+      "INSERT INTO users (name, email, password, role, student_id) VALUES (?, ?, ?, ?, ?)",
+      "Bob The Builder", "student2@example.com", "password", "student", "S002"
+    );
+    console.log("Seeded student: Bob The Builder (student2@example.com / password)");
+
+    // Seed Consultations
+    const faculty1Id = faculty1Result.lastID;
+    const faculty2Id = faculty2Result.lastID;
+    const student1Id = student1Result.lastID;
+    const student2Id = student2Result.lastID;
+
+    if (student1Id && faculty1Id && faculty2Id && student2Id) {
+        // Consultation 1: Alice + Ada, Scheduled, tomorrow 10:00 AM
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        tomorrow.setHours(10, 0, 0, 0);
+        await db.run(
+          "INSERT INTO consultations (student_id, faculty_id, datetime, status) VALUES (?, ?, ?, ?)",
+          student1Id, faculty1Id, tomorrow.toISOString(), "Scheduled"
+        );
+
+        // Consultation 2: Alice + Charles, Completed, yesterday 02:00 PM
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        yesterday.setHours(14, 0, 0, 0);
+        await db.run(
+          "INSERT INTO consultations (student_id, faculty_id, datetime, status) VALUES (?, ?, ?, ?)",
+          student1Id, faculty2Id, yesterday.toISOString(), "Completed"
+        );
+
+        // Consultation 3: Bob + Ada, Cancelled, day after tomorrow 09:00 AM
+        const dayAfterTomorrow = new Date();
+        dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+        dayAfterTomorrow.setHours(9, 0, 0, 0);
+        await db.run(
+          "INSERT INTO consultations (student_id, faculty_id, datetime, status, reason) VALUES (?, ?, ?, ?, ?)",
+          student2Id, faculty1Id, dayAfterTomorrow.toISOString(), "Cancelled", "Student request: schedule conflict"
+        );
+        console.log("Seeded initial consultations.");
+    }
   }
-
-
   return db;
 }
-
-// Example of seeding a faculty member and their status (for testing)
-export async function seedInitialFaculty() {
-  const dbInstance = await getDb();
-  const facultyCount = await dbInstance.get('SELECT COUNT(*) as count FROM users WHERE role = "faculty"');
-  if (facultyCount && facultyCount.count === 0) {
-    const result = await dbInstance.run(
-      "INSERT INTO users (name, email, password, role, faculty_id, department) VALUES (?, ?, ?, ?, ?, ?)",
-      "Dr. Ada Lovelace", "ada@uniconsult.com", "password123", "faculty", "F001", "Computer Science"
-    );
-    if (result.lastID) {
-      await dbInstance.run(
-        "INSERT INTO faculty_status (faculty_id, status, last_updated) VALUES (?, ?, ?)",
-        result.lastID, "Available", new Date().toISOString()
-      );
-      console.log("Seeded faculty: Dr. Ada Lovelace");
-    }
-
-     const result2 = await dbInstance.run(
-      "INSERT INTO users (name, email, password, role, faculty_id, department) VALUES (?, ?, ?, ?, ?, ?)",
-      "Prof. Charles Babbage", "charles@uniconsult.com", "password123", "faculty", "F002", "Mathematics"
-    );
-    if (result2.lastID) {
-      await dbInstance.run(
-        "INSERT INTO faculty_status (faculty_id, status, last_updated) VALUES (?, ?, ?)",
-        result2.lastID, "In Class", new Date().toISOString()
-      );
-      console.log("Seeded faculty: Prof. Charles Babbage");
-    }
-  }
-}
-
-// Call seed functions (optional, good for dev)
-// seedInitialFaculty().catch(console.error);

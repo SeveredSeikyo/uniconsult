@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, seedInitialFaculty } from '@/lib/db';
+import { getDb } from '@/lib/db';
 import type { FacultyStatus, FacultyStatusOption, User } from '@/lib/definitions';
-
-// Ensure some faculty exist for testing
-seedInitialFaculty().catch(console.error);
 
 // GET all faculty statuses
 export async function GET() {
