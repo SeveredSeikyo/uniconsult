@@ -8,6 +8,8 @@ import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard,
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 export default function Header() {
@@ -48,6 +50,27 @@ export default function Header() {
         ? `block py-3 px-4 text-lg hover:bg-primary/90 rounded-md ${pathname === path ? 'bg-primary/80 font-semibold' : ''}`
         : `hover:text-accent-foreground/80 ${pathname === path ? 'font-semibold text-accent-foreground underline' : ''}`
     );
+  
+  const AccountInfoPopoverContent = () => {
+    if (!currentUser) return null;
+    return (
+        <Card className="w-80 shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-xl text-primary">Account Information</CardTitle>
+            <CardDescription>Your UniConsult profile details.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 text-sm text-foreground/90">
+            <p><strong>Name:</strong> {currentUser.name}</p>
+            <p><strong>Email:</strong> {currentUser.email}</p>
+            <p><strong>Role:</strong> <span className="capitalize">{currentUser.role}</span></p>
+            {currentUser.student_id && <p><strong>Student ID:</strong> {currentUser.student_id}</p>}
+            {currentUser.faculty_id && <p><strong>Faculty ID:</strong> {currentUser.faculty_id}</p>}
+            {currentUser.department && <p><strong>Department:</strong> {currentUser.department}</p>}
+          </CardContent>
+        </Card>
+    );
+  };
+
 
   const navLinks = (
     <>
@@ -115,9 +138,16 @@ export default function Header() {
             <>
               {navLinks}
               <span className="hidden md:inline text-sm opacity-80">|</span>
-              <span className="hidden md:flex items-center text-sm">
-                <UserCircle className="mr-1 inline-block h-4 w-4" /> {currentUser.name} ({currentUser.role})
-              </span>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" size="sm" className="hidden md:flex items-center text-sm hover:bg-primary/80">
+                    <UserCircle className="mr-1 inline-block h-4 w-4" /> {currentUser.name} ({currentUser.role})
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="p-0 border-0 shadow-none bg-transparent" sideOffset={10}>
+                  <AccountInfoPopoverContent />
+                </PopoverContent>
+              </Popover>
               <Button variant="ghost" size="sm" onClick={handleLogout} className="hover:bg-primary/80">
                 <LogOut className="mr-1 h-4 w-4" /> Logout
               </Button>
@@ -157,9 +187,16 @@ export default function Header() {
                   <>
                     {navLinks}
                     <div className="border-t border-primary-foreground/20 my-4"></div>
-                    <div className="flex items-center text-sm mb-3 px-4">
-                      <UserCircle className="mr-2 h-5 w-5" /> {currentUser.name} ({currentUser.role})
-                    </div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button variant="ghost" className="flex items-center text-lg mb-3 px-4 py-3 hover:bg-primary/90 w-full justify-start">
+                          <UserCircle className="mr-2 h-5 w-5" /> {currentUser.name} ({currentUser.role})
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="p-0 border-0 shadow-none bg-transparent" sideOffset={10} side="bottom" align="start">
+                        <AccountInfoPopoverContent />
+                      </PopoverContent>
+                    </Popover>
                     <Button variant="ghost" onClick={handleLogout} className="w-full justify-start text-lg py-3 hover:bg-primary/90">
                       <LogOut className="mr-2 h-5 w-5" /> Logout
                     </Button>

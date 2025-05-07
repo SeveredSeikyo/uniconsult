@@ -103,22 +103,6 @@ export default function DashboardPage() {
             </>
           )}
         </div>
-        
-        {/* Generic info or actions for all roles */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl">Account Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2 text-foreground/80">
-            <p><strong>Name:</strong> {currentUser.name}</p>
-            <p><strong>Email:</strong> {currentUser.email}</p>
-            <p><strong>Role:</strong> {currentUser.role}</p>
-            {currentUser.student_id && <p><strong>Student ID:</strong> {currentUser.student_id}</p>}
-            {currentUser.faculty_id && <p><strong>Faculty ID:</strong> {currentUser.faculty_id}</p>}
-            {currentUser.department && <p><strong>Department:</strong> {currentUser.department}</p>}
-          </CardContent>
-        </Card>
-
       </div>
     </AuthGuard>
   );
