@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { BookOpenCheck, LogOut, UserCircle, ShieldCheck, Users, LayoutDashboard, Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from '@/components/ui/sheet'; // Added SheetTitle
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -173,6 +173,9 @@ export default function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[350px] bg-primary text-primary-foreground p-6">
+              {/* Added SheetTitle for accessibility. sr-only hides it visually. */}
+              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+              
               <div className="flex justify-between items-center mb-8">
                  <Link href="/" className="text-xl font-bold flex items-center" onClick={() => setIsMobileMenuOpen(false)}>
                     <BookOpenCheck className="mr-2 h-7 w-7" />
@@ -229,4 +232,3 @@ export default function Header() {
     </header>
   );
 }
-
