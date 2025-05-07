@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
+// Removed: import { GeistMono } from 'geist/font/mono'; - Not found and not explicitly used. Sans will be default.
 import './globals.css';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Toaster } from '@/components/ui/toaster';
@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${GeistSans.variable} ${GeistMono.variable} font-sans antialiased`}>
+      <body className={`${GeistSans.variable} font-sans antialiased`}> {/* Removed GeistMono variable */}
         <AuthProvider>
           <Header />
           <main className="container mx-auto p-4 pt-20"> {/* Add pt-20 for fixed header */}

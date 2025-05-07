@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from '@/hooks/use-toast';
 import { Download, Loader2, BarChart3, FileText, Filter } from 'lucide-react';
 import { format } from 'date-fns';
+import { Label } from '@/components/ui/label'; // Added import for Label
 
 type ReportType = "consultations" | "faculty_availability";
 
