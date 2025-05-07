@@ -110,11 +110,6 @@ export default function LoginPage() {
               <Link href="/register">Register here</Link>
             </Button>
           </p>
-          <div className="text-xs text-muted-foreground mt-4 text-center">
-            <p>Demo Admin: admin@uniconsult.com / adminpassword</p>
-            <p>Demo Faculty: faculty@example.com / password</p>
-            <p>Demo Student: student@example.com / password</p>
-          </div>
         </CardFooter>
       </Card>
     </div>

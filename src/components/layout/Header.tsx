@@ -168,7 +168,7 @@ export default function Header() {
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="hover:bg-primary/80">
-                <Menu className="h-6 w-6" />
+                <Menu className="h-6 w-6"/>
                 <span className="sr-only">Open menu</span>
               </Button>
             </SheetTrigger>
@@ -181,12 +181,12 @@ export default function Header() {
                     <BookOpenCheck className="mr-2 h-7 w-7" />
                     UniConsult
                  </Link>
-                <SheetClose asChild>
+                {/* <SheetClose asChild>
                     <Button variant="ghost" size="icon" className="hover:bg-primary/80">
                         <X className="h-6 w-6" />
                         <span className="sr-only">Close menu</span>
                     </Button>
-                </SheetClose>
+                </SheetClose> */}
               </div>
               <nav className="flex flex-col space-y-1">
                 {currentUser ? (
