@@ -52,11 +52,3 @@ To run this project locally:
 
 Contributions are welcome! Please open issues or submit pull requests for improvements and bug fixes.
 
-## License
-
-MIT License
-© 2025 \[Your Name or Team Name]
-
-```
-
----
