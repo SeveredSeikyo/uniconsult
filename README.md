@@ -1,8 +1,3 @@
-Sure! Here's a `README.md` file for `uniconsult.vercel.app`, assuming it's a university consultation or student support web app. You can edit details like features or tech stack if needed:
-
----
-
-````markdown
 # Uniconsult
 
 **Live Demo:** [uniconsult.vercel.app](https://uniconsult.vercel.app)
@@ -65,6 +60,3 @@ MIT License
 ```
 
 ---
-
-Would you like me to tailor this further to your actual tech stack or features?
-```
