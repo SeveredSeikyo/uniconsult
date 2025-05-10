@@ -8,7 +8,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] text-center ">
       <Image 
-        src="https://picsum.photos/seed/uniconsult-main/1200/400" 
+        src="https://i.ibb.co/dwXND354/3.png" 
         alt="University campus" 
         width={1200} 
         height={400} 
