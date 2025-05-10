@@ -37,7 +37,6 @@ export default function Header() {
         <div className="container mx-auto flex h-16 items-center justify-between p-4">
           <Link href="/" className="text-2xl font-bold flex items-center">
             <img src="https://i.ibb.co/bg6QDCWL/plmun-logo-1.png" alt="PLMUN Logo" className="h-8 w-auto mr-2" />
-            PLMUN Portal
           </Link>
           <div className="h-8 w-24 animate-pulse rounded bg-[#84878B]/70"></div>
         </div>
@@ -138,7 +137,6 @@ export default function Header() {
             <>
               {navLinks(false)}
               <span className="hidden md:inline text-sm text-[#84878B] opacity-80">|</span>
-             agnesium
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="ghost" size="sm" className="hidden md:flex items-center text-sm text-[#84878B] hover:bg-[#27691F]/90">
@@ -176,7 +174,6 @@ export default function Header() {
               <div className="flex justify-between items-center mb-8">
                  <Link href="/" className="text-xl font-bold flex items-center text-white" onClick={() => setIsMobileMenuOpen(false)}>
                     <img src="https://i.ibb.co/bg6QDCWL/plmun-logo-1.png" alt="PLMUN Logo" className="h-7 w-auto mr-2" />
-                    PLMUN Portal
                  </Link>
                 <SheetClose className="ring-offset-transparent focus:ring-transparent focus:outline-none text-[#84878B] hover:text-[#27691F]">
                   <X className="h-7 w-7" />
