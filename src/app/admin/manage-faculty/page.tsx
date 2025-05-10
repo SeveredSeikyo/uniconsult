@@ -2,7 +2,7 @@
 
 import AuthGuard from '@/components/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState }from 'react';
+import { useEffect, useState } from 'react';
 import type { User } from '@/lib/definitions';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -71,6 +71,7 @@ export default function ManageFacultyPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, faculty_id: facultyIdInput, department }),
       });
+      constcastle
       const data = await response.json();
       if (response.ok) {
         toast({ title: "Faculty Added", description: `${data.user.name} has been added as faculty.`, variant: "default" });
@@ -93,56 +94,57 @@ export default function ManageFacultyPage() {
       const response = await fetch(`/api/admin/faculty/${facultyUserId}`, {
         method: 'DELETE',
       });
-      if(response.ok) {
-        toast({title: "Success", description: "Faculty member deleted."});
+      if (response.ok) {
+        toast({ title: "Success", description: "Faculty member deleted." });
         fetchFaculty(); // Refresh
       } else {
         const data = await response.json();
-        toast({title: "Error", description: data.error || "Could not delete faculty.", variant: "destructive"});
+        toast({ title: "Error", description: data.error || "Could not delete faculty.", variant: "destructive" });
       }
     } catch (error) {
-      toast({title: "Error", description: "Failed to delete faculty.", variant: "destructive"});
+      toast({ title: "Error", description: "Failed to delete faculty.", variant: "destructive" });
     }
   };
 
-
   return (
     <AuthGuard allowedRoles={['admin']}>
-      <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-primary flex items-center">
-          <Users className="mr-3 h-8 w-8" /> Manage Faculty Accounts
+      <div className="space-y-8 bg-[#2C3136] p-6">
+        <h1 className="text-3xl font-bold text-white flex items-center">
+          <Users className="mr-3 h-8 w-8 text-[#27691F]" /> Manage PLMUN Faculty Accounts
         </h1>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-[#2C3136] text-white">
           <CardHeader>
-            <CardTitle className="text-2xl">Add New Faculty</CardTitle>
-            <CardDescription>Create an account for a new faculty member.</CardDescription>
+            <CardTitle className="text-2xl text-white">Add New Faculty</CardTitle>
+            <CardDescription className="text-[#84878B]">
+              Create an account for a new faculty member in the PLMUN Portal system.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleAddFaculty} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Dr. Jane Smith" />
+                  <Label htmlFor="name" className="text-[#84878B]">Full Name</Label>
+                  <Input id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Dr. Jane Smith" className="bg-white text-[#2C3136] border-[#84878B]" />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="jane.smith@example.com" />
+                  <Label htmlFor="email" className="text-[#84878B]">Email</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="jane.smith@example.com" className="bg-white text-[#2C3136] border-[#84878B]" />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" />
+                  <Label htmlFor="password" className="text-[#84878B]">Password</Label>
+                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" className="bg-white text-[#2C3136] border-[#84878B]" />
                 </div>
                 <div className="space-y-1">
-                  <Label htmlFor="facultyIdInput">Faculty ID</Label>
-                  <Input id="facultyIdInput" value={facultyIdInput} onChange={(e) => setFacultyIdInput(e.target.value)} required placeholder="F00X" />
+                  <Label htmlFor="facultyIdInput" className="text-[#84878B]">Faculty ID</Label>
+                  <Input id="facultyIdInput" value={facultyIdInput} onChange={(e) => setFacultyIdInput(e.target.value)} required placeholder="F00X" className="bg-white text-[#2C3136] border-[#84878B]" />
                 </div>
                 <div className="space-y-1 md:col-span-2">
-                  <Label htmlFor="department">Department</Label>
-                  <Input id="department" value={department} onChange={(e) => setDepartment(e.target.value)} required placeholder="e.g., Computer Science" />
+                  <Label htmlFor="department" className="text-[#84878B]">Department</Label>
+                  <Input id="department" value={department} onChange={(e) => setDepartment(e.target.value)} required placeholder="e.g., Computer Science" className="bg-white text-[#2C3136] border-[#84878B]" />
                 </div>
               </div>
-              <Button type="submit" disabled={isSubmitting} className="shadow-md">
+              <Button type="submit" disabled={isSubmitting} className="bg-[#27691F] text-white hover:bg-[#27691F]/90 shadow-md">
                 {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <UserPlus className="mr-2 h-4 w-4" />}
                 Add Faculty
               </Button>
@@ -150,53 +152,56 @@ export default function ManageFacultyPage() {
           </CardContent>
         </Card>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-[#2C3136] text-white">
           <CardHeader>
-            <CardTitle className="text-2xl">Current Faculty Members</CardTitle>
+            <CardTitle className="text-2xl text-white">Current Faculty Members</CardTitle>
+            <CardDescription className="text-[#84878B]">
+              List of all faculty members in the PLMUN Portal system.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex justify-center items-center p-6">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                <p className="ml-2">Loading faculty list...</p>
+                <Loader2 className="h-8 w-8 animate-spin text-[#27691F]" />
+                <p className="ml-2 text-[#84878B]">Loading faculty list...</p>
               </div>
             ) : facultyList.length === 0 ? (
-                <p className="text-muted-foreground text-center py-4">No faculty members found.</p>
+                <p className="text-[#84878B] text-center py-4">No faculty members found.</p>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Faculty ID</TableHead>
-                    <TableHead>Department</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="text-white">Name</TableHead>
+                    <TableHead className="text-white">Email</TableHead>
+                    <TableHead className="text-white">Faculty ID</TableHead>
+                    <TableHead className="text-white">Department</TableHead>
+                    <TableHead className="text-right text-white">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {facultyList.map((faculty) => (
                     <TableRow key={faculty.id}>
-                      <TableCell className="font-medium">{faculty.name}</TableCell>
-                      <TableCell>{faculty.email}</TableCell>
-                      <TableCell>{faculty.faculty_id || 'N/A'}</TableCell>
-                      <TableCell>{faculty.department || 'N/A'}</TableCell>
+                      <TableCell className="font-medium text-white">{faculty.name}</TableCell>
+                      <TableCell className="text-[#84878B]">{faculty.email}</TableCell>
+                      <TableCell className="text-[#84878B]">{faculty.faculty_id || 'N/A'}</TableCell>
+                      <TableCell className="text-[#84878B]">{faculty.department || 'N/A'}</TableCell>
                       <TableCell className="text-right">
                         <AlertDialog>
                           <AlertDialogTrigger asChild>
-                            <Button variant="destructive" size="sm" className="shadow-sm">
+                            <Button className="bg-red-900 text-white hover:bg-red-900/90 shadow-sm">
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </AlertDialogTrigger>
-                          <AlertDialogContent>
+                          <AlertDialogContent className="bg-[#2C3136] text-white">
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Confirm Deletion</AlertDialogTitle>
-                              <AlertDialogDescription>
+                              <AlertDialogTitle className="text-white">Confirm Deletion</AlertDialogTitle>
+                              <AlertDialogDescription className="text-[#84878B]">
                                 Are you sure you want to delete faculty member {faculty.name}? This will also remove their status and potentially affect associated consultations. This action cannot be undone.
                               </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => handleDeleteFaculty(faculty.id)} className="bg-destructive hover:bg-destructive/90">
+                              <AlertDialogCancel className="bg-[#84878B] text-white hover:bg-[#84878B]/90">Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteFaculty(faculty.id)} className="bg-red-900 text-white hover:bg-red-900/90">
                                 Delete
                               </AlertDialogAction>
                             </AlertDialogFooter>
@@ -209,11 +214,11 @@ export default function ManageFacultyPage() {
               </Table>
             )}
           </CardContent>
-           {facultyList.length > 0 && (
-            <CardFooter className="text-sm text-muted-foreground">
-                Total faculty members: {facultyList.length}
+          {facultyList.length > 0 && (
+            <CardFooter className="text-sm text-[#84878B]">
+              Total faculty members: {facultyList.length}
             </CardFooter>
-           )}
+          )}
         </Card>
       </div>
     </AuthGuard>

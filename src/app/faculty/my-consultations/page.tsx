@@ -83,51 +83,62 @@ export default function FacultyConsultationsPage() {
       console.error("Cancellation error:", error);
     }
   };
-  
+
   const getStatusBadgeColor = (status: Consultation['status']) => {
-    if (status === 'Scheduled') return 'bg-blue-100 text-blue-700 border-blue-300';
-    if (status === 'Cancelled') return 'bg-red-100 text-red-700 border-red-300';
-    if (status === 'Completed') return 'bg-green-100 text-green-700 border-green-300';
-    return 'bg-gray-100 text-gray-700 border-gray-300';
+    if (status === 'Scheduled') return 'bg-blue-900 text-white border-blue-950';
+    if (status === 'Cancelled') return 'bg-red-900 text-white border-red-950';
+    if (status === 'Completed') return 'bg-[#27691F] text-white border-[#27691F]/50';
+    return 'bg-[#84878B] text-white border-[#84878B]/50';
   };
 
+  const getCardBorderColor = (status: Consultation['status']) => {
+    if (status === 'Scheduled') return 'border-blue-950';
+    if (status === 'Cancelled') return 'border-red-950';
+    if (status === 'Completed') return 'border-[#27691F]/50';
+    return 'border-[#84878B]/50';
+  };
 
   return (
     <AuthGuard allowedRoles={['faculty']}>
-      <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-primary flex items-center">
-          <ClipboardList className="mr-3 h-8 w-8" /> My Scheduled Consultations
+      <div className="space-y-8 bg-[#2C3136] p-6">
+        <h1 className="text-3xl font-bold text-white flex items-center">
+          <ClipboardList className="mr-3 h-8 w-8 text-[#27691F]" /> My PLMUN Portal Scheduled Consultations
         </h1>
 
         {isLoading ? (
           <div className="flex justify-center items-center p-8">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            <p className="ml-3 text-lg">Loading your consultations...</p>
+            <Loader2 className="h-10 w-10 animate-spin text-[#27691F]" />
+            <p className="ml-3 text-lg text-[#84878B]">Loading your consultations...</p>
           </div>
         ) : consultations.length === 0 ? (
-          <Card className="shadow-md">
+          <Card className="shadow-md bg-[#2C3136] text-white">
             <CardContent className="p-6 text-center">
-              <Info className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-              <p className="text-xl text-muted-foreground">You have no consultations scheduled at this time.</p>
+              <Info className="mx-auto h-12 w-12 text-[#84878B] mb-4" />
+              <p className="text-xl text-[#84878B]">You have no consultations scheduled in the PLMUN Portal at this time.</p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {consultations.map((consultation) => (
-              <Card key={consultation.id} className={`shadow-lg ${getStatusBadgeColor(consultation.status).split(' ')[2]}`}>
+              <Card 
+                key={consultation.id} 
+                className={`shadow-lg bg-[#2C3136] text-white ${getCardBorderColor(consultation.status)}`}
+              >
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-xl">With: {consultation.student_name}</CardTitle>
-                     <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusBadgeColor(consultation.status)}`}>
+                    <CardTitle className="text-xl text-white">With: {consultation.student_name}</CardTitle>
+                    <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${getStatusBadgeColor(consultation.status)}`}>
                       {consultation.status}
                     </span>
                   </div>
-                  <CardDescription>{format(new Date(consultation.datetime), "EEEE, MMMM d, yyyy 'at' h:mm a")}</CardDescription>
+                  <CardDescription className="text-[#84878B]">
+                    {format(new Date(consultation.datetime), "EEEE, MMMM d, yyyy 'at' h:mm a")}
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
-                 {consultation.status === 'Cancelled' && consultation.reason && (
-                    <p className="text-sm text-red-600 flex items-start">
-                      <MessageSquareWarning className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0" />
+                  {consultation.status === 'Cancelled' && consultation.reason && (
+                    <p className="text-sm text-[#84878B] flex items-start">
+                      <MessageSquareWarning className="h-4 w-4 mr-2 mt-0.5 flex-shrink-0 text-red-900" />
                       <span className="font-semibold">Reason for cancellation:</span> {consultation.reason}
                     </p>
                   )}
@@ -137,18 +148,17 @@ export default function FacultyConsultationsPage() {
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button 
-                          variant="destructive" 
-                          size="sm" 
-                          className="shadow"
+                          className="bg-red-900 text-white hover:bg-red-900/90 shadow"
+                          size="sm"
                           onClick={() => setSelectedConsultationId(consultation.id)}
                         >
                           <CalendarX2 className="mr-2 h-4 w-4" /> Cancel
                         </Button>
                       </AlertDialogTrigger>
-                      <AlertDialogContent>
+                      <AlertDialogContent className="bg-[#2C3136] text-white">
                         <AlertDialogHeader>
-                          <AlertDialogTitle>Cancel Consultation?</AlertDialogTitle>
-                          <AlertDialogDescription>
+                          <AlertDialogTitle className="text-white">Cancel Consultation?</AlertDialogTitle>
+                          <AlertDialogDescription className="text-[#84878B]">
                             Please provide a reason for cancelling your consultation with {consultation.student_name} on {format(new Date(consultation.datetime), "PPp")}.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
@@ -156,11 +166,22 @@ export default function FacultyConsultationsPage() {
                           placeholder="Enter reason for cancellation..."
                           value={cancelReason}
                           onChange={(e) => setCancelReason(e.target.value)}
-                           className="min-h-[100px]"
+                          className="min-h-[100px] bg-white text-[#2C3136] border-[#84878B]"
                         />
                         <AlertDialogFooter>
-                          <AlertDialogCancel onClick={() => {setCancelReason(''); setSelectedConsultationId(null);}}>Back</AlertDialogCancel>
-                          <AlertDialogAction onClick={handleCancelConsultation} disabled={!cancelReason.trim()}>Confirm Cancellation</AlertDialogAction>
+                          <AlertDialogCancel 
+                            className="bg-[#84878B] text-white hover:bg-[#84878B]/90"
+                            onClick={() => {setCancelReason(''); setSelectedConsultationId(null);}}
+                          >
+                            Back
+                          </AlertDialogCancel>
+                          <AlertDialogAction 
+                            className="bg-red-900 text-white hover:bg-red-900/90"
+                            onClick={handleCancelConsultation} 
+                            disabled={!cancelReason.trim()}
+                          >
+                            Confirm Cancellation
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>

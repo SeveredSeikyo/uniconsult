@@ -2,7 +2,7 @@
 
 import AuthGuard from '@/components/AuthGuard';
 import { useAuth } from '@/contexts/AuthContext';
-import { useEffect, useState }from 'react';
+import { useEffect, useState } from 'react';
 import type { Consultation } from '@/lib/definitions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -52,33 +52,35 @@ export default function AllConsultationsPage() {
   );
 
   const getStatusBadgeColor = (status: Consultation['status']) => {
-    if (status === 'Scheduled') return 'bg-blue-100 text-blue-700 border-blue-300';
-    if (status === 'Cancelled') return 'bg-red-100 text-red-700 border-red-300';
-    if (status === 'Completed') return 'bg-green-100 text-green-700 border-green-300';
-    return 'bg-gray-100 text-gray-700 border-gray-300';
+    if (status === 'Scheduled') return 'bg-blue-900 text-white border-blue-950';
+    if (status === 'Cancelled') return 'bg-red-900 text-white border-red-950';
+    if (status === 'Completed') return 'bg-[#27691F] text-white border-[#27691F]/50';
+    return 'bg-[#84878B] text-white border-[#84878B]/50';
   };
 
   return (
     <AuthGuard allowedRoles={['admin']}>
-      <div className="space-y-8">
-        <h1 className="text-3xl font-bold text-primary flex items-center">
-          <CalendarDays className="mr-3 h-8 w-8" /> All System Consultations
+      <div className="space-y-8 bg-[#2C3136] p-6">
+        <h1 className="text-3xl font-bold text-white flex items-center">
+          <CalendarDays className="mr-3 h-8 w-8 text-[#27691F]" /> All PLMUN Portal Consultations
         </h1>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-[#2C3136] text-white">
           <CardHeader>
-            <CardTitle className="text-2xl">Consultation Records</CardTitle>
-            <CardDescription>A comprehensive list of all consultations recorded in the UniConsult system.</CardDescription>
+            <CardTitle className="text-2xl text-white">Consultation Records</CardTitle>
+            <CardDescription className="text-[#84878B]">
+              A comprehensive list of all consultations recorded in the PLMUN Portal system.
+            </CardDescription>
             <div className="pt-4">
-              <Label htmlFor="search-consultations">Search Consultations</Label>
+              <Label htmlFor="search-consultations" className="text-[#84878B]">Search Consultations</Label>
               <div className="relative">
-                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-[#84878B]" />
                 <Input
                   id="search-consultations"
                   placeholder="Search by student, faculty, or status..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
+                  className="pl-10 bg-white text-[#2C3136] border-[#84878B]"
                 />
               </div>
             </div>
@@ -86,10 +88,10 @@ export default function AllConsultationsPage() {
           <CardContent>
             {isLoading ? (
               <div className="flex justify-center items-center p-6 h-64">
-                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <Loader2 className="h-12 w-12 animate-spin text-[#27691F]" />
               </div>
             ) : filteredConsultations.length === 0 ? (
-                <p className="text-muted-foreground text-center py-10">
+                <p className="text-[#84878B] text-center py-10">
                   {searchTerm ? "No consultations match your search." : "No consultations found in the system."}
                 </p>
             ) : (
@@ -97,27 +99,27 @@ export default function AllConsultationsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
-                      <TableHead>Student</TableHead>
-                      <TableHead>Faculty</TableHead>
-                      <TableHead>Date & Time</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="min-w-[200px]">Reason (if cancelled)</TableHead>
+                      <TableHead className="text-white">ID</TableHead>
+                      <TableHead className="text-white">Student</TableHead>
+                      <TableHead className="text-white">Faculty</TableHead>
+                      <TableHead className="text-white">Date & Time</TableHead>
+                      <TableHead className="text-white">Status</TableHead>
+                      <TableHead className="min-w-[200px] text-white">Reason (if cancelled)</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredConsultations.map((consultation) => (
                       <TableRow key={consultation.id}>
-                        <TableCell>{consultation.id}</TableCell>
-                        <TableCell className="font-medium">{consultation.student_name}</TableCell>
-                        <TableCell className="font-medium">{consultation.faculty_name}</TableCell>
-                        <TableCell>{format(new Date(consultation.datetime), "PPpp")}</TableCell>
+                        <TableCell className="text-[#84878B]">{consultation.id}</TableCell>
+                        <TableCell className="font-medium text-white">{consultation.student_name}</TableCell>
+                        <TableCell className="font-medium text-white">{consultation.faculty_name}</TableCell>
+                        <TableCell className="text-[#84878B]">{format(new Date(consultation.datetime), "PPpp")}</TableCell>
                         <TableCell>
                           <span className={`px-2 py-0.5 text-xs font-semibold rounded-full border whitespace-nowrap ${getStatusBadgeColor(consultation.status)}`}>
                             {consultation.status}
                           </span>
                         </TableCell>
-                        <TableCell className="text-sm text-muted-foreground">{consultation.reason || 'N/A'}</TableCell>
+                        <TableCell className="text-sm text-[#84878B]">{consultation.reason || 'N/A'}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -125,14 +127,13 @@ export default function AllConsultationsPage() {
               </div>
             )}
           </CardContent>
-           {filteredConsultations.length > 0 && (
-            <CardFooter className="text-sm text-muted-foreground">
-                Displaying {filteredConsultations.length} of {consultations.length} total consultations.
+          {filteredConsultations.length > 0 && (
+            <CardFooter className="text-sm text-[#84878B]">
+              Displaying {filteredConsultations.length} of {consultations.length} total consultations.
             </CardFooter>
-           )}
+          )}
         </Card>
       </div>
     </AuthGuard>
   );
 }
-

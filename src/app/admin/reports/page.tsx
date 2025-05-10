@@ -10,9 +10,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from '@/hooks/use-toast';
-import { Download, Loader2, BarChart3, FileText, Filter } from 'lucide-react';
+import { Download, Loader2, BarChart3 } from 'lucide-react';
 import { format } from 'date-fns';
-import { Label } from '@/components/ui/label'; // Added import for Label
+import { Label } from '@/components/ui/label';
 
 type ReportType = "consultations" | "faculty_availability";
 
@@ -73,6 +73,20 @@ export default function ReportsPage() {
     return facultyMatch && statusMatch;
   });
 
+  const getConsultationStatusBadgeColor = (status: Consultation['status']) => {
+    if (status === 'Scheduled') return 'bg-blue-900 text-white border-blue-950';
+    if (status === 'Cancelled') return 'bg-red-900 text-white border-red-950';
+    if (status === 'Completed') return 'bg-[#27691F] text-white border-[#27691F]/50';
+    return 'bg-[#84878B] text-white border-[#84878B]/50';
+  };
+
+  const getFacultyStatusBadgeColor = (status: FacultyStatus['status']) => {
+    if (status === 'Available') return 'bg-[#27691F] text-white border-[#27691F]/50';
+    if (status === 'In Class') return 'bg-orange-900 text-white border-orange-950';
+    if (status === 'Offline') return 'bg-red-900 text-white border-red-950';
+    return 'bg-[#84878B] text-white border-[#84878B]/50';
+  };
+
   const exportToCSV = (type: ReportType) => {
     let csvContent = "data:text/csv;charset=utf-8,";
     let dataToExport;
@@ -115,95 +129,106 @@ export default function ReportsPage() {
 
   return (
     <AuthGuard allowedRoles={['admin']}>
-      <div className="space-y-8">
+      <div className="space-y-8 bg-[#2C3136] p-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
-          <h1 className="text-3xl font-bold text-primary flex items-center mb-4 md:mb-0">
-            <BarChart3 className="mr-3 h-8 w-8" /> UniConsult Reports
+          <h1 className="text-3xl font-bold text-white flex items-center mb-4 md:mb-0">
+            <BarChart3 className="mr-3 h-8 w-8 text-[#27691F]" /> PLMUN Portal Reports
           </h1>
-          <Button onClick={() => exportToCSV(activeTab)} disabled={isLoading} className="shadow-md">
+          <Button 
+            onClick={() => exportToCSV(activeTab)} 
+            disabled={isLoading} 
+            className="bg-[#27691F] text-white hover:bg-[#27691F]/90 shadow-md"
+          >
             <Download className="mr-2 h-4 w-4" /> Export Current View to CSV
           </Button>
         </div>
 
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as ReportType)} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:w-auto">
-            <TabsTrigger value="consultations">Consultations Report</TabsTrigger>
-            <TabsTrigger value="faculty_availability">Faculty Availability</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:w-auto bg-[#2C3136] text-[#84878B]">
+            <TabsTrigger 
+              value="consultations" 
+              className="data-[state=active]:bg-[#27691F] data-[state=active]:text-white hover:bg-[#27691F]/10"
+            >
+              Consultations Report
+            </TabsTrigger>
+            <TabsTrigger 
+              value="faculty_availability" 
+              className="data-[state=active]:bg-[#27691F] data-[state=active]:text-white hover:bg-[#27691F]/10"
+            >
+              Faculty Availability
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="consultations" className="mt-6">
-            <Card className="shadow-xl">
+            <Card className="shadow-xl bg-[#2C3136] text-white">
               <CardHeader>
-                <CardTitle className="text-2xl">Consultations Summary</CardTitle>
-                <CardDescription>Overview of all scheduled, cancelled, and completed consultations.</CardDescription>
-                 <div className="flex flex-col md:flex-row gap-4 pt-4">
-                    <div className="flex-1 space-y-1">
-                        <Label htmlFor="faculty-filter">Filter by Faculty</Label>
-                        <Select value={facultyFilter} onValueChange={setFacultyFilter}>
-                            <SelectTrigger id="faculty-filter">
-                                <SelectValue placeholder="All Faculty" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Faculty</SelectItem>
-                                {facultyList.map(f => (
-                                    <SelectItem key={f.id} value={String(f.id)}>{f.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                    <div className="flex-1 space-y-1">
-                         <Label htmlFor="status-filter">Filter by Status</Label>
-                        <Select value={statusFilter} onValueChange={setStatusFilter}>
-                            <SelectTrigger id="status-filter">
-                                <SelectValue placeholder="All Statuses" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="all">All Statuses</SelectItem>
-                                <SelectItem value="Scheduled">Scheduled</SelectItem>
-                                <SelectItem value="Cancelled">Cancelled</SelectItem>
-                                <SelectItem value="Completed">Completed</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                <CardTitle className="text-2xl text-white">Consultations Summary</CardTitle>
+                <CardDescription className="text-[#84878B]">
+                  Overview of all scheduled, cancelled, and completed consultations in the PLMUN Portal system.
+                </CardDescription>
+                <div className="flex flex-col md:flex-row gap-4 pt-4">
+                  <div className="flex-1 space-y-1">
+                    <Label htmlFor="faculty-filter" className="text-[#84878B]">Filter by Faculty</Label>
+                    <Select value={facultyFilter} onValueChange={setFacultyFilter}>
+                      <SelectTrigger id="faculty-filter" className="bg-white text-[#2C3136] border-[#84878B]">
+                        <SelectValue placeholder="All Faculty" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white text-[#2C3136]">
+                        <SelectItem value="all">All Faculty</SelectItem>
+                        {facultyList.map(f => (
+                          <SelectItem key={f.id} value={String(f.id)}>{f.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <Label htmlFor="status-filter" className="text-[#84878B]">Filter by Status</Label>
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger id="status-filter" className="bg-white text-[#2C3136] border-[#84878B]">
+                        <SelectValue placeholder="All Statuses" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-white text-[#2C3136]">
+                        <SelectItem value="all">All Statuses</SelectItem>
+                        <SelectItem value="Scheduled">Scheduled</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                        <SelectItem value="Completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
                   <div className="flex justify-center items-center p-6 h-64">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    <Loader2 className="h-12 w-12 animate-spin text-[#27691F]" />
                   </div>
                 ) : filteredConsultations.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-10">No consultations match current filters.</p>
+                  <p className="text-[#84878B] text-center py-10">No consultations match current filters.</p>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Student</TableHead>
-                        <TableHead>Faculty</TableHead>
-                        <TableHead>Date & Time</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Reason (if cancelled)</TableHead>
+                        <TableHead className="text-white">ID</TableHead>
+                        <TableHead className="text-white">Student</TableHead>
+                        <TableHead className="text-white">Faculty</TableHead>
+                        <TableHead className="text-white">Date & Time</TableHead>
+                        <TableHead className="text-white">Status</TableHead>
+                        <TableHead className="text-white">Reason (if cancelled)</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {filteredConsultations.map((c) => (
                         <TableRow key={c.id}>
-                          <TableCell>{c.id}</TableCell>
-                          <TableCell>{c.student_name}</TableCell>
-                          <TableCell>{c.faculty_name}</TableCell>
-                          <TableCell>{format(new Date(c.datetime), "PPpp")}</TableCell>
+                          <TableCell className="text-[#84878B]">{c.id}</TableCell>
+                          <TableCell className="text-[#84878B]">{c.student_name}</TableCell>
+                          <TableCell className="text-[#84878B]">{c.faculty_name}</TableCell>
+                          <TableCell className="text-[#84878B]">{format(new Date(c.datetime), "PPpp")}</TableCell>
                           <TableCell>
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
-                                c.status === 'Scheduled' ? 'bg-blue-100 text-blue-700 border-blue-300' :
-                                c.status === 'Cancelled' ? 'bg-red-100 text-red-700 border-red-300' :
-                                c.status === 'Completed' ? 'bg-green-100 text-green-700 border-green-300' :
-                                'bg-gray-100 text-gray-700 border-gray-300'
-                            }`}>
-                                {c.status}
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getConsultationStatusBadgeColor(c.status)}`}>
+                              {c.status}
                             </span>
                           </TableCell>
-                          <TableCell>{c.reason || 'N/A'}</TableCell>
+                          <TableCell className="text-[#84878B]">{c.reason || 'N/A'}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -214,42 +239,39 @@ export default function ReportsPage() {
           </TabsContent>
 
           <TabsContent value="faculty_availability" className="mt-6">
-            <Card className="shadow-xl">
+            <Card className="shadow-xl bg-[#2C3136] text-white">
               <CardHeader>
-                <CardTitle className="text-2xl">Faculty Availability Report</CardTitle>
-                <CardDescription>Current status of all faculty members.</CardDescription>
+                <CardTitle className="text-2xl text-white">Faculty Availability Report</CardTitle>
+                <CardDescription className="text-[#84878B]">
+                  Current status of all faculty members in the PLMUN Portal system.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {isLoading ? (
                   <div className="flex justify-center items-center p-6 h-64">
-                    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                    <Loader2 className="h-12 w-12 animate-spin text-[#27691F]" />
                   </div>
                 ) : reportData.facultyStatus.length === 0 ? (
-                     <p className="text-muted-foreground text-center py-10">No faculty status data available.</p>
+                  <p className="text-[#84878B] text-center py-10">No faculty status data available.</p>
                 ) : (
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Faculty Name</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Last Updated</TableHead>
+                        <TableHead className="text-white">Faculty Name</TableHead>
+                        <TableHead className="text-white">Status</TableHead>
+                        <TableHead className="text-white">Last Updated</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {reportData.facultyStatus.map((fs) => (
                         <TableRow key={fs.id}>
-                          <TableCell className="font-medium">{fs.faculty_name}</TableCell>
+                          <TableCell className="font-medium text-white">{fs.faculty_name}</TableCell>
                           <TableCell>
-                            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
-                                fs.status === 'Available' ? 'bg-green-100 text-green-700 border-green-300' :
-                                fs.status === 'In Class' ? 'bg-orange-100 text-orange-700 border-orange-300' :
-                                fs.status === 'Offline' ? 'bg-red-100 text-red-700 border-red-300' :
-                                'bg-gray-100 text-gray-700 border-gray-300'
-                            }`}>
-                                {fs.status}
+                            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${getFacultyStatusBadgeColor(fs.status)}`}>
+                              {fs.status}
                             </span>
                           </TableCell>
-                          <TableCell>{format(new Date(fs.last_updated), "PPpp")}</TableCell>
+                          <TableCell className="text-[#84878B]">{format(new Date(fs.last_updated), "PPpp")}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
@@ -263,5 +285,3 @@ export default function ReportsPage() {
     </AuthGuard>
   );
 }
-
-// Helper for table display if needed or direct use of shadcn table.

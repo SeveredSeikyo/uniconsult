@@ -31,8 +31,6 @@ export default function ManageStatusPage() {
     if (!currentUser || !currentUser.id) return;
     setIsLoading(true);
     try {
-      // This API returns all statuses. We need to find the current user's.
-      // A dedicated API endpoint /api/faculty/status/:id would be more efficient.
       const response = await fetch('/api/faculty/status');
       if (response.ok) {
         const allStatuses: FacultyStatus[] = await response.json();
@@ -42,8 +40,6 @@ export default function ManageStatusPage() {
           setLastUpdated(userStatus.last_updated);
           setNewStatus(userStatus.status); // Pre-fill select with current status
         } else {
-          // If no status found, means it's a new faculty or status record missing.
-          // Default to 'Offline' and allow setting.
           setCurrentStatus('Offline'); 
           setNewStatus('Offline');
           toast({ title: "Status Not Set", description: "Your status is not set. Defaulting to Offline.", variant: "default" });
@@ -90,13 +86,13 @@ export default function ManageStatusPage() {
   const getStatusDisplayInfo = (status: FacultyStatusOption | undefined) => {
     switch (status) {
       case 'Available':
-        return { text: 'Available', icon: <CheckCircle className="h-6 w-6 text-green-500" />, color: 'text-green-600' };
+        return { text: 'Available', icon: <CheckCircle className="h-6 w-6 text-[#27691F]" />, color: 'text-[#27691F]' };
       case 'In Class':
-        return { text: 'In Class', icon: <Activity className="h-6 w-6 text-orange-500" />, color: 'text-orange-600' };
+        return { text: 'In Class', icon: <Activity className="h-6 w-6 text-orange-900" />, color: 'text-orange-900' };
       case 'Offline':
-        return { text: 'Offline', icon: <ShieldAlert className="h-6 w-6 text-red-500" />, color: 'text-red-600' };
+        return { text: 'Offline', icon: <ShieldAlert className="h-6 w-6 text-red-900" />, color: 'text-red-900' };
       default:
-        return { text: 'Loading...', icon: <Loader2 className="h-6 w-6 animate-spin" />, color: 'text-gray-500' };
+        return { text: 'Loading...', icon: <Loader2 className="h-6 w-6 animate-spin text-[#84878B]" />, color: 'text-[#84878B]' };
     }
   };
   
@@ -104,38 +100,38 @@ export default function ManageStatusPage() {
 
   return (
     <AuthGuard allowedRoles={['faculty']}>
-      <div className="space-y-8 max-w-2xl mx-auto">
-        <h1 className="text-3xl font-bold text-primary flex items-center">
-            <Edit3 className="mr-3 h-8 w-8" /> Update My Availability Status
+      <div className="space-y-8 max-w-2xl mx-auto bg-[#2C3136] p-6">
+        <h1 className="text-3xl font-bold text-white flex items-center">
+          <Edit3 className="mr-3 h-8 w-8 text-[#27691F]" /> Update My PLMUN Portal Availability Status
         </h1>
 
-        <Card className="shadow-xl">
+        <Card className="shadow-xl bg-[#2C3136] text-white">
           <CardHeader>
-            <CardTitle className="text-2xl">Current Status</CardTitle>
+            <CardTitle className="text-2xl text-white">Current Status</CardTitle>
             {isLoading ? (
-                 <CardDescription className="flex items-center text-lg">
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Loading status...
-                 </CardDescription>
+              <CardDescription className="flex items-center text-lg text-[#84878B]">
+                <Loader2 className="mr-2 h-5 w-5 animate-spin text-[#84878B]" /> Loading status...
+              </CardDescription>
             ) : (
-                <>
+              <>
                 <CardDescription className={`flex items-center text-xl font-semibold ${displayInfo.color}`}>
-                    {displayInfo.icon}
-                    <span className="ml-2">{displayInfo.text}</span>
+                  {displayInfo.icon}
+                  <span className="ml-2">{displayInfo.text}</span>
                 </CardDescription>
-                {lastUpdated && <p className="text-sm text-muted-foreground">Last updated: {format(new Date(lastUpdated), "PPPp")}</p>}
-                </>
+                {lastUpdated && <p className="text-sm text-[#84878B]">Last updated: {format(new Date(lastUpdated), "PPPp")}</p>}
+              </>
             )}
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label htmlFor="status-select" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="status-select" className="block text-sm font-medium text-[#84878B] mb-1">
                 Set new status:
               </label>
               <Select value={newStatus} onValueChange={(value) => setNewStatus(value as FacultyStatusOption)}>
-                <SelectTrigger id="status-select" className="w-full text-base py-3">
+                <SelectTrigger id="status-select" className="w-full text-base py-3 bg-white text-[#2C3136] border-[#84878B]">
                   <SelectValue placeholder="Select your new status" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white text-[#2C3136]">
                   <SelectItem value="Available">Available</SelectItem>
                   <SelectItem value="In Class">In Class</SelectItem>
                   <SelectItem value="Offline">Offline</SelectItem>
@@ -147,7 +143,7 @@ export default function ManageStatusPage() {
             <Button 
               onClick={handleUpdateStatus} 
               disabled={isLoading || isUpdating || !newStatus || newStatus === currentStatus} 
-              className="w-full md:w-auto text-lg py-6 shadow-md"
+              className="w-full md:w-auto text-lg py-6 bg-[#27691F] text-white hover:bg-[#27691F]/90 shadow-md"
               size="lg"
             >
               {isUpdating ? (

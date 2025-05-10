@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${GeistSans.variable} font-sans antialiased`}> {/* Removed GeistMono variable */}
+      <body className={`${GeistSans.variable} font-sans antialiased bg-[#2C3136]`}> {/* Removed GeistMono variable */}
         <AuthProvider>
           <Header />
           <main className="container mx-auto p-4 pt-20"> {/* Add pt-20 for fixed header */}

@@ -43,7 +43,6 @@ export default function RegisterPage() {
       // Faculty ID might be assigned upon admin approval or system generation. For now, let's omit direct input.
     }
 
-
     try {
       const response = await fetch('/api/users/register', {
         method: 'POST',
@@ -58,9 +57,6 @@ export default function RegisterPage() {
           description: `Welcome, ${data.user.name}! Please log in.`,
           variant: 'default',
         });
-        // Optionally log in the user directly after registration
-        // login(data.user);
-        // router.push('/dashboard');
         router.push('/login'); // Redirect to login after registration
       } else {
         toast({
@@ -82,33 +78,58 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-8rem)] py-8">
-      <Card className="w-full max-w-lg shadow-xl">
+    <div className="flex items-center justify-center bg-[#2C3136] p-8 min-h-screen">
+      <Card className="w-full max-w-lg shadow-xl bg-[#2C3136] text-white">
         <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-primary">Create UniConsult Account</CardTitle>
-          <CardDescription>Join UniConsult to schedule and manage consultations.</CardDescription>
+          <CardTitle className="text-3xl font-bold text-white">Create PLMUN Portal Account</CardTitle>
+          <CardDescription className="text-[#84878B]">
+            Join the PLMUN Portal to schedule and manage consultations.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input id="name" placeholder="John Doe" value={name} onChange={(e) => setName(e.target.value)} required />
+              <Label htmlFor="name" className="text-[#84878B]">Full Name</Label>
+              <Input 
+                id="name" 
+                placeholder="John Doe" 
+                value={name} 
+                onChange={(e) => setName(e.target.value)} 
+                required 
+                className="bg-white text-[#2C3136] border-[#84878B]"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input id="email" type="email" placeholder="john.doe@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <Label htmlFor="email" className="text-[#84878B]">Email</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                placeholder="john.doe@example.com" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+                className="bg-white text-[#2C3136] border-[#84878B]"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
+              <Label htmlFor="password" className="text-[#84878B]">Password</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                placeholder="••••••••" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+                className="bg-white text-[#2C3136] border-[#84878B]"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="role">I am a...</Label>
+              <Label htmlFor="role" className="text-[#84878B]">I am a...</Label>
               <Select value={role} onValueChange={(value) => setRole(value as UserRole)}>
-                <SelectTrigger id="role">
+                <SelectTrigger id="role" className="bg-white text-[#2C3136] border-[#84878B]">
                   <SelectValue placeholder="Select your role" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white text-[#2C3136]">
                   <SelectItem value="student">Student</SelectItem>
                   <SelectItem value="faculty">Faculty</SelectItem>
                   {/* Admin role is typically not self-registered */}
@@ -118,19 +139,37 @@ export default function RegisterPage() {
 
             {role === 'student' && (
               <div className="space-y-2">
-                <Label htmlFor="studentId">Student ID</Label>
-                <Input id="studentId" placeholder="S123456" value={studentId} onChange={(e) => setStudentId(e.target.value)} required={role === 'student'} />
+                <Label htmlFor="studentId" className="text-[#84878B]">Student ID</Label>
+                <Input 
+                  id="studentId" 
+                  placeholder="S123456" 
+                  value={studentId} 
+                  onChange={(e) => setStudentId(e.target.value)} 
+                  required={role === 'student'} 
+                  className="bg-white text-[#2C3136] border-[#84878B]"
+                />
               </div>
             )}
 
             {role === 'faculty' && (
               <div className="space-y-2">
-                <Label htmlFor="department">Department</Label>
-                <Input id="department" placeholder="e.g., Computer Science" value={department} onChange={(e) => setDepartment(e.target.value)} required={role === 'faculty'}/>
+                <Label htmlFor="department" className="text-[#84878B]">Department</Label>
+                <Input 
+                  id="department" 
+                  placeholder="e.g., Computer Science" 
+                  value={department} 
+                  onChange={(e) => setDepartment(e.target.value)} 
+                  required={role === 'faculty'}
+                  className="bg-white text-[#2C3136] border-[#84878B]"
+                />
               </div>
             )}
 
-            <Button type="submit" className="w-full text-lg py-6 shadow-md" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full text-lg py-6 bg-[#27691F] text-white hover:bg-[#27691F]/90 shadow-md" 
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
@@ -141,9 +180,13 @@ export default function RegisterPage() {
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-[#84878B]">
             Already have an account?{' '}
-            <Button variant="link" asChild className="p-0 h-auto text-primary hover:underline">
+            <Button 
+              variant="link" 
+              asChild 
+              className="p-0 h-auto text-[#27691F] hover:underline"
+            >
               <Link href="/login">Login here</Link>
             </Button>
           </p>
