@@ -10,7 +10,7 @@ Uniconsult is a web-based platform designed to streamline university consultatio
 - 📋 View available time slots and upcoming appointments
 - 🔔 Get reminders for your bookings
 - 👩‍🏫 Faculty dashboard to manage slots and availability
-- 🔐 Authentication and secure access (if implemented)
+- 🔐 Authentication and secure access
 
 ## Tech Stack
 
