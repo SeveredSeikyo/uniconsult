@@ -16,7 +16,7 @@ Uniconsult is a web-based platform designed to streamline university consultatio
 
 - **Frontend:** React / Next.js (Vercel Hosting)
 - **Styling:** TailwindCSS
-- **Backend / DB:** Supabase / Firebase / Custom API (update if different)
+- **Backend / DB:** SQLite
 - **Deployment:** Vercel
 
 ## Getting Started
